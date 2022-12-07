@@ -34,8 +34,8 @@ export default defineComponent({
     return () => {
       return (
         <div class="devui-popover-refactor">
-          <div id="reference"></div>
-          <div id="floating">Tooltip</div>
+          {ctx.slots.reference?.() ? <div>{ctx.slots.reference?.()}</div> : <div>123</div>}
+          {ctx.slots.content?.() ? <div>{ctx.slots.content?.()}</div> : <div>456</div>}
         </div>
       );
     };

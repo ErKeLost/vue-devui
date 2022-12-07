@@ -12,7 +12,16 @@
 
 ```vue
 <template>
-  <d-popover-refactor>{{ data }}</d-popover-refactor>
+  <div class="demo-popover-refactor-basic">
+    <d-popover-refactor>
+      <template #reference>
+        <div id="reference"></div>
+      </template>
+      <template #content>
+        <div id="floating">Tooltip</div>
+      </template>
+    </d-popover-refactor>
+  </div>
 </template>
 
 <script>
@@ -20,19 +29,28 @@ import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   setup() {
-    const data = ref('弹出框');
-
-    return {
-      data
-    }
-  }
-})
+    return {};
+  },
+});
 </script>
 
 <style lang="scss">
-// demo中的样式不支持 scoped，需要使用约定的class名称包裹，格式：demo-componentname-demoname
 .demo-popover-refactor-basic {
   // css
+  #reference {
+    width: 100px;
+    height: 100px;
+    border: 2px dashed black;
+    margin: 0;
+  }
+
+  #floating {
+    position: absolute;
+    background: gray;
+    padding: 0.5rem;
+    color: white;
+    z-index: 999;
+  }
 }
 </style>
 ```
@@ -41,27 +59,27 @@ export default defineComponent({
 
 ### PopoverRefactor 参数
 
-| 参数名 | 类型 | 默认值 | 说明 | 跳转 Demo |
-| :---- | :---- | :---- | :---- | :--------- |
-|      |   `string`   |      |      |     [基本用法](#基本用法)      |
-|      |   [IXxx](#ixxx)   |      |      |           |
-|      |      |      |      |           |
+| 参数名 | 类型          | 默认值 | 说明 | 跳转 Demo             |
+| :----- | :------------ | :----- | :--- | :-------------------- |
+|        | `string`      |        |      | [基本用法](#基本用法) |
+|        | [IXxx](#ixxx) |        |      |                       |
+|        |               |        |      |                       |
 
 ### PopoverRefactor 事件
 
 | 事件名 | 回调参数 | 说明 | 跳转 Demo |
-| :---- | :---- | :---- | :--------- |
-|      |      |      |           |
-|      |      |      |           |
-|      |      |      |           |
+| :----- | :------- | :--- | :-------- |
+|        |          |      |           |
+|        |          |      |           |
+|        |          |      |           |
 
 ### PopoverRefactor 插槽
 
-| 插槽名 | 说明 | 跳转 Demo |
-| :---- | :---- | :--------- |
-|   default   |      |           |
-|      |      |           |
-|      |      |           |
+| 插槽名  | 说明 | 跳转 Demo |
+| :------ | :--- | :-------- |
+| default |      |           |
+|         |      |           |
+|         |      |           |
 
 ### PopoverRefactor 类型定义
 
@@ -72,4 +90,3 @@ interface IXxx {
   xxx: string;
 }
 ```
-

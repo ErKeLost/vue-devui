@@ -4,18 +4,3 @@
 .#{$devui-prefix}-popover-refactor {
   //
 }
-
-#reference {
-  width: 100px;
-  height: 100px;
-  border: 2px dashed black;
-  margin: 0;
-}
-
-#floating {
-  position: absolute;
-  background: gray;
-  padding: 0.5rem;
-  color: white;
-  z-index: 999;
-}
