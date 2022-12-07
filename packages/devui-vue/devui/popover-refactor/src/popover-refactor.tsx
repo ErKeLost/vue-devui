@@ -1,4 +1,4 @@
-import { defineComponent, onMounted, toRefs } from 'vue';
+import { defineComponent, onMounted, onUnmounted, ref, Teleport } from 'vue';
 import type { SetupContext } from 'vue';
 import { popoverRefactorProps, PopoverRefactorProps } from './popover-refactor-types';
 import './popover-refactor.scss';
@@ -9,33 +9,42 @@ export default defineComponent({
   props: popoverRefactorProps,
   emits: [],
   setup(props: PopoverRefactorProps, ctx: SetupContext) {
-    // 直接解构 props 会导致响应式失效，需要使用 toRefs 进行包裹
-    // const { data } = toRefs(props);
-    // console.log(data.value);
-    onMounted(() => {
-      const reference = document.getElementById('reference');
-      const floating = document.getElementById('floating');
-      function handleWindowScroll() {
-        computePosition(reference, floating, {
-          placement: 'top',
-          // Try removing this line below. The tooltip will
-          // overflow the viewport's edge!
-          middleware: [flip()],
-        }).then(({ x, y }) => {
-          Object.assign(floating.style, {
-            top: `${y}px`,
-            left: `${x}px`,
-          });
+    const reference = ref<HTMLElement | null>(null);
+    const content = ref<HTMLElement | null>(null);
+    function handleWindowScroll() {
+      computePosition(reference.value as HTMLElement, content.value as HTMLElement, {
+        placement: 'top',
+        middleware: [flip()],
+      }).then(({ x, y }) => {
+        Object.assign(content.value?.style as CSSStyleDeclaration, {
+          top: `${y}px`,
+          left: `${x}px`,
         });
-      }
-      const scroll = throttle(handleWindowScroll, 200);
+      });
+    }
+    const scroll = throttle(handleWindowScroll, 200);
+    onMounted(() => {
+      scroll();
       window.addEventListener('scroll', scroll);
+    });
+    onUnmounted(() => {
+      window.removeEventListener('scroll', scroll);
     });
     return () => {
       return (
         <div class="devui-popover-refactor">
-          {ctx.slots.reference?.() ? <div>{ctx.slots.reference?.()}</div> : <div>123</div>}
-          {ctx.slots.content?.() ? <div>{ctx.slots.content?.()}</div> : <div>456</div>}
+          {ctx.slots.reference?.() ? (
+            <div ref={reference} style={{ position: 'relative', display: 'inline-block' }}>
+              {ctx.slots.reference?.()}
+            </div>
+          ) : null}
+          {ctx.slots.content?.() ? (
+            <Teleport to="body">
+              <div ref={content} style={{ position: 'absolute' }}>
+                {ctx.slots.content?.()}
+              </div>
+            </Teleport>
+          ) : null}
         </div>
       );
     };

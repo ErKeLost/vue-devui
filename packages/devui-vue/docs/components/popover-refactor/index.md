@@ -43,14 +43,13 @@ export default defineComponent({
     border: 2px dashed black;
     margin: 0;
   }
-
-  #floating {
-    position: absolute;
-    background: gray;
-    padding: 0.5rem;
-    color: white;
-    z-index: 999;
-  }
+}
+#floating {
+  background: #fab1a0;
+  padding: 0.5rem;
+  border: 1px dash gray;
+  color: white;
+  width: 60px;
 }
 </style>
 ```
