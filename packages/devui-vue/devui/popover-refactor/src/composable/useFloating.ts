@@ -5,7 +5,7 @@ import { throttle } from 'lodash';
 interface UseFloatingType {
   leftPosition: Ref<number | undefined | null>;
   topPosition: Ref<number | undefined | null>;
-  clean: () => void;
+  destroy: () => void;
 }
 
 export function getComponentElement(element: HTMLElement | ComponentPublicInstance | null): HTMLElement {
@@ -32,10 +32,6 @@ export function useFloating(
       console.log('开始更新');
       leftPosition.value = x;
       topPosition.value = y;
-      Object.assign(floatingElement.value?.style as CSSStyleDeclaration, {
-        top: `${y}px`,
-        left: `${x}px`,
-      });
       // strategy.value = position.strategy;
       // placement.value = position.placement;
       // middlewareData.value = position.middlewareData;
@@ -43,9 +39,12 @@ export function useFloating(
   }
   let cleanup: void | (() => void) | unknown;
   function autoComputePosition() {
-    cleanup = autoUpdate(referenceElement.value, floatingElement.value, throttle(updatePosition, 200));
+    if (referenceElement.value != null && floatingElement.value != null) {
+      cleanup = autoUpdate(referenceElement.value, floatingElement.value, throttle(updatePosition, 200));
+      return;
+    }
   }
-  function clean() {
+  function destroy() {
     if (typeof cleanup === 'function') {
       cleanup();
     }
@@ -55,6 +54,6 @@ export function useFloating(
   return {
     topPosition,
     leftPosition,
-    clean,
+    destroy,
   };
 }

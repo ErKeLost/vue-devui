@@ -8,6 +8,7 @@ import colorPanel from './components/color-picker-panel/color-picker-panel';
 import './color-picker.scss';
 import { parseColor, extractColor, RGBAtoCSS } from './utils/color-utils';
 import { ColorPickerColor } from './utils/color-utils-types';
+import popoverRefactor from '../../popover-refactor/src/popover-refactor';
 export default defineComponent({
   name: 'DColorPicker',
   components: {
@@ -55,7 +56,7 @@ export default defineComponent({
     }
     onMounted(() => {
       // resize 响应式 colorpicker
-      window.addEventListener('resize', resize);
+      // window.addEventListener('resize', resize);
       // 点击展示 colorpicker
       window.addEventListener('click', isExhibition, true);
     });
@@ -91,31 +92,31 @@ export default defineComponent({
       formItemText.value = type;
     }
     // floating 监听
-    function handleWindowScroll() {
-      computePosition(colorCubeRef.value as HTMLElement, pickerRef.value as HTMLElement, {
-        middleware: [flip()],
-      }).then(({ y }) => {
-        Object.assign(pickerRef.value?.style as CSSStyleDeclaration, {
-          top: `${y}px`,
-        });
-      });
-    }
-    const scroll = throttle(handleWindowScroll, 200);
-    // 初始化的时候 确定 colopicker位置  由于 pickerref 默认 为 undefined 所以监听 showcolorpicker
-    watch(
-      () => showColorPicker.value,
-      (newValue) => {
-        if (!newValue) {
-          window.removeEventListener('scroll', scroll);
-        }
-        newValue &&
-          nextTick(() => {
-            if (pickerRef.value) {
-              window.addEventListener('scroll', scroll);
-            }
-          });
-      }
-    );
+    // function handleWindowScroll() {
+    //   computePosition(colorCubeRef.value as HTMLElement, pickerRef.value as HTMLElement, {
+    //     middleware: [flip()],
+    //   }).then(({ y }) => {
+    //     Object.assign(pickerRef.value?.style as CSSStyleDeclaration, {
+    //       top: `${y}px`,
+    //     });
+    //   });
+    // }
+    // const scroll = throttle(handleWindowScroll, 200);
+    // // 初始化的时候 确定 colopicker位置  由于 pickerref 默认 为 undefined 所以监听 showcolorpicker
+    // watch(
+    //   () => showColorPicker.value,
+    //   (newValue) => {
+    //     if (!newValue) {
+    //       window.removeEventListener('scroll', scroll);
+    //     }
+    //     newValue &&
+    //       nextTick(() => {
+    //         if (pickerRef.value) {
+    //           window.addEventListener('scroll', scroll);
+    //         }
+    //       });
+    //   }
+    // );
     // 监听用户输入 2021.12.10
     watch(
       () => props.modelValue,
@@ -125,37 +126,45 @@ export default defineComponent({
       },
       { immediate: true }
     );
-
     return () => {
       return (
-        <div class="devui-color-picker" ref={colorCubeRef}>
-          <div class="devui-color-picker-container">
-            <div class="devui-color-picker-container-wrap">
-              <div class="devui-color-picker-container-wrap-current-color" style={triggerColor.value}></div>
-              <div
-                class={[
-                  'devui-color-picker-container-wrap-transparent',
-                  'devui-color-picker-container-wrap-current-color-transparent',
-                ]}></div>
-              <div class="devui-color-picker-color-value">
-                <p style={textColor.value as StyleValue}>{formItemValue.value}</p>
-              </div>
-            </div>
-          </div>
-          <Transition name="color-picker-transition">
-            {showColorPicker.value ? (
-              <div ref={pickerRef} class={['devui-color-picker-position']}>
-                <color-panel
-                  v-model={initialColor.value}
-                  ref={containerRef}
-                  mode={mode.value}
-                  onChangeTextColor={changeTextColor}
-                  onChangePaletteColor={changePaletteColor}
-                  onChangeTextModeType={changeTextModeType}></color-panel>
-              </div>
-            ) : null}
-          </Transition>
-        </div>
+        <>
+          <d-popover-refactor
+            v-slots={{
+              reference: () => (
+                <div class="devui-color-picker" ref={colorCubeRef}>
+                  <div class="devui-color-picker-container">
+                    <div class="devui-color-picker-container-wrap">
+                      <div class="devui-color-picker-container-wrap-current-color" style={triggerColor.value}></div>
+                      <div
+                        class={[
+                          'devui-color-picker-container-wrap-transparent',
+                          'devui-color-picker-container-wrap-current-color-transparent',
+                        ]}></div>
+                      <div class="devui-color-picker-color-value">
+                        <p style={textColor.value as StyleValue}>{formItemValue.value}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ),
+              content: () => (
+                <Transition name="color-picker-transition">
+                  {showColorPicker.value ? (
+                    <div ref={pickerRef} class={['devui-color-picker-position']}>
+                      <color-panel
+                        v-model={initialColor.value}
+                        ref={containerRef}
+                        mode={mode.value}
+                        onChangeTextColor={changeTextColor}
+                        onChangePaletteColor={changePaletteColor}
+                        onChangeTextModeType={changeTextModeType}></color-panel>
+                    </div>
+                  ) : null}
+                </Transition>
+              ),
+            }}></d-popover-refactor>
+        </>
       );
     };
   },
