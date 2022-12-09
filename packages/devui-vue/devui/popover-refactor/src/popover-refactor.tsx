@@ -13,7 +13,6 @@ export default defineComponent({
   emits: [],
   setup(props: PopoverRefactorProps, ctx: SetupContext) {
     const { placement } = toRefs(props);
-    const visible = ref(false);
     const reference = ref<HTMLElement | null>(null);
     const content = ref<HTMLElement | null>(null);
     const { leftPosition, topPosition, destroy } = useFloating(reference, content, {
