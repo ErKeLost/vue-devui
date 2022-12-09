@@ -97,24 +97,8 @@ export default defineComponent({
       return (
         <>
           <d-popover-refactor
+            placement="bottom-start"
             v-slots={{
-              reference: () => (
-                <div class="devui-color-picker" ref={colorCubeRef}>
-                  <div class="devui-color-picker-container">
-                    <div class="devui-color-picker-container-wrap">
-                      <div class="devui-color-picker-container-wrap-current-color" style={triggerColor.value}></div>
-                      <div
-                        class={[
-                          'devui-color-picker-container-wrap-transparent',
-                          'devui-color-picker-container-wrap-current-color-transparent',
-                        ]}></div>
-                      <div class="devui-color-picker-color-value">
-                        <p style={textColor.value as StyleValue}>{formItemValue.value}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ),
               content: () => (
                 <Transition name="color-picker-transition">
                   {showColorPicker.value ? (
@@ -130,7 +114,23 @@ export default defineComponent({
                   ) : null}
                 </Transition>
               ),
-            }}></d-popover-refactor>
+            }}>
+            <div class="devui-color-picker" ref={colorCubeRef}>
+              <div class="devui-color-picker-container">
+                <div class="devui-color-picker-container-wrap">
+                  <div class="devui-color-picker-container-wrap-current-color" style={triggerColor.value}></div>
+                  <div
+                    class={[
+                      'devui-color-picker-container-wrap-transparent',
+                      'devui-color-picker-container-wrap-current-color-transparent',
+                    ]}></div>
+                  <div class="devui-color-picker-color-value">
+                    <p style={textColor.value as StyleValue}>{formItemValue.value}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </d-popover-refactor>
         </>
       );
     };

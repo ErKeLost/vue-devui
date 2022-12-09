@@ -13,19 +13,21 @@ export function getComponentElement(element: HTMLElement | ComponentPublicInstan
 }
 export function useFloating(
   reference: Ref<HTMLElement | ComponentPublicInstance | null>,
-  floating: Ref<HTMLElement | ComponentPublicInstance | null>
+  floating: Ref<HTMLElement | ComponentPublicInstance | null>,
+  options: any
 ): UseFloatingType {
   const referenceElement = computed(() => getComponentElement(reference.value));
   const floatingElement = computed(() => getComponentElement(floating.value));
   const leftPosition = ref<number | null>();
   const topPosition = ref<number | null>();
+  const placementPosition = computed(() => options.placement);
   function updatePosition() {
     if (referenceElement.value === null || floatingElement.value === null) {
       return;
     }
     computePosition(referenceElement.value, floatingElement.value, {
       middleware: [flip()],
-      placement: 'bottom-start',
+      placement: placementPosition.value,
       // placement: placementOption.value,
       // strategy: strategyOption.value,
     }).then(({ x, y }) => {

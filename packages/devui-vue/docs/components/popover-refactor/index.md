@@ -14,9 +14,7 @@
 <template>
   <div class="demo-popover-refactor-basic">
     <d-popover-refactor>
-      <template #reference>
-        <div id="reference"></div>
-      </template>
+      <div id="reference"></div>
       <template #content>
         <div id="floating">Tooltip</div>
       </template>
