@@ -1,8 +1,6 @@
-import { defineComponent, ref, computed, onMounted, watch, nextTick, provide, unref, readonly, Transition } from 'vue';
+import { defineComponent, ref, computed, onMounted, watch, provide, unref, readonly, Transition } from 'vue';
 import type { StyleValue, Ref } from 'vue';
-import { computePosition, flip } from '@floating-ui/dom';
-import { throttle } from 'lodash';
-import { useReactive, colorPickerResize, isExhibitionColorPicker, changeColorValue } from './utils/composable';
+import { useReactive, isExhibitionColorPicker, changeColorValue } from './utils/composable';
 import { colorPickerProps, ColorPickerProps } from './color-picker-types';
 import colorPanel from './components/color-picker-panel/color-picker-panel';
 import './color-picker.scss';
@@ -29,8 +27,6 @@ export default defineComponent({
     const colorCubeRef = ref<HTMLElement | null>(null);
     const pickerRef = ref<HTMLElement | null>(null);
     const containerRef = ref<HTMLElement | null>(null);
-    const left = ref(0);
-    const top = ref(0);
     const isChangeTextColor = ref(true);
     const showColorPicker = ref(false);
     const formItemText = ref(`${props.mode ?? DEFAULT_MODE}`);
@@ -42,9 +38,6 @@ export default defineComponent({
       // 提取颜色 2021.12.10
       const value = extractColor(initialColor.value as ColorPickerColor, props.modelValue, mode.value as string, props.showAlpha);
       emit('update:modelValue', value);
-    }
-    function resize() {
-      return colorPickerResize(colorCubeRef as Ref<HTMLElement>, top, left);
     }
     function isExhibition(event: Event) {
       return isExhibitionColorPicker(
@@ -91,33 +84,7 @@ export default defineComponent({
       mode.value = type;
       formItemText.value = type;
     }
-    // floating 监听
-    // function handleWindowScroll() {
-    //   computePosition(colorCubeRef.value as HTMLElement, pickerRef.value as HTMLElement, {
-    //     middleware: [flip()],
-    //   }).then(({ y }) => {
-    //     Object.assign(pickerRef.value?.style as CSSStyleDeclaration, {
-    //       top: `${y}px`,
-    //     });
-    //   });
-    // }
-    // const scroll = throttle(handleWindowScroll, 200);
-    // // 初始化的时候 确定 colopicker位置  由于 pickerref 默认 为 undefined 所以监听 showcolorpicker
-    // watch(
-    //   () => showColorPicker.value,
-    //   (newValue) => {
-    //     if (!newValue) {
-    //       window.removeEventListener('scroll', scroll);
-    //     }
-    //     newValue &&
-    //       nextTick(() => {
-    //         if (pickerRef.value) {
-    //           window.addEventListener('scroll', scroll);
-    //         }
-    //       });
-    //   }
-    // );
-    // 监听用户输入 2021.12.10
+    // 监听用户输入
     watch(
       () => props.modelValue,
       (newValue) => {

@@ -3,9 +3,9 @@
 
 .#{$devui-prefix}-popover-reference {
   position: relative;
-  // display: inline-block;
 }
 
 .#{$devui-prefix}-popover-content {
   position: absolute;
+  z-index: $devui-z-index-function-widget;
 }

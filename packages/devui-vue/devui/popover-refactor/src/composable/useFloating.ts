@@ -1,5 +1,5 @@
 // import type { ComputePositionConfig, ComputePositionReturn, Middleware, SideObject, Placement, MiddlewareData } from '@floating-ui/core';
-import { computePosition, flip, autoUpdate } from '@floating-ui/dom';
+import { computePosition, flip, autoUpdate, autoPlacement } from '@floating-ui/dom';
 import { ref, Ref, watch, computed, ComponentPublicInstance } from 'vue';
 import { throttle } from 'lodash';
 interface UseFloatingType {
@@ -25,7 +25,7 @@ export function useFloating(
     }
     computePosition(referenceElement.value, floatingElement.value, {
       middleware: [flip()],
-      placement: 'top',
+      placement: 'bottom-start',
       // placement: placementOption.value,
       // strategy: strategyOption.value,
     }).then(({ x, y }) => {
