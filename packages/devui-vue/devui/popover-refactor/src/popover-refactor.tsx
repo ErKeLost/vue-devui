@@ -34,10 +34,9 @@ export default defineComponent({
       return (
         <>
           {ctx.slots.default?.() ? (
-            // <div ref={reference} class="devui-popover-reference">
-            //   {ctx.slots.default?.()}
-            // </div>
-            <PopperTrigger ref={reference}>{ctx.slots.default?.()}</PopperTrigger>
+            <div ref={reference} class="devui-popover-reference">
+              {ctx.slots.default?.()}
+            </div>
           ) : null}
           {ctx.slots.content?.() ? (
             <Teleport to="body">
