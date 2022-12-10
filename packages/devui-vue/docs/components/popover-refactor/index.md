@@ -19,14 +19,20 @@
         <div id="floating">Tooltip</div>
       </template>
     </d-popover-refactor>
-    <d-popover-refactor trigger='manually' :show=show>
+    <d-popover-refactor trigger="manually" :show="show">
       <div id="reference"></div>
       <template #content>
         <div id="floating">Tooltip</div>
       </template>
     </d-popover-refactor>
     <d-button @click="change">按钮</d-button>
-    <d-popover-refactor trigger='hover'>
+    <d-popover-refactor trigger="hover" :mouse-enter-delay="1500">
+      <div id="reference"></div>
+      <template #content>
+        <div id="floating">Tooltip</div>
+      </template>
+    </d-popover-refactor>
+    <d-popover-refactor trigger="hover" :mouse-leave-delay="2000">
       <div id="reference"></div>
       <template #content>
         <div id="floating">Tooltip</div>
@@ -40,13 +46,13 @@ import { defineComponent, ref } from 'vue';
 
 export default defineComponent({
   setup() {
-    const show = ref(false)
+    const show = ref(false);
     function change() {
-      show.value = !show.value
+      show.value = !show.value;
     }
     return {
       show,
-      change
+      change,
     };
   },
 });
