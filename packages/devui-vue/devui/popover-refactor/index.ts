@@ -1,7 +1,7 @@
 import type { App } from 'vue';
-import PopoverRefactor from './src/popover-refactor';
+import PopoverRefactor from './src/popover';
 
-export * from './src/popover-refactor-types';
+export * from './src/popover-types';
 
 export { PopoverRefactor };
 

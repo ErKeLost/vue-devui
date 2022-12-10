@@ -14,14 +14,16 @@ type PlacementType =
   | 'bottom-end';
 
 export type TriggerType = 'click' | 'hover' | 'manually';
-export const popoverRefactorProps = {
+export type Alignment = 'start' | 'end';
+export type OffsetOptions = { mainAxis?: number; crossAxis?: number };
+export const popoverProps = {
   placement: {
-    type: String,
+    type: String as PropType<PlacementType>,
     default: 'top',
   },
   show: {
     type: Boolean,
-    default: false
+    default: false,
   },
   offset: {
     type: [Number, Object] as PropType<number | OffsetOptions>,
@@ -39,6 +41,10 @@ export const popoverRefactorProps = {
     type: Boolean,
     default: true,
   },
+  animateName: {
+    type: String,
+    default: '',
+  },
   mouseEnterDelay: {
     type: Number,
     default: 150,
@@ -53,4 +59,8 @@ export const popoverRefactorProps = {
   },
 } as const;
 
-export type PopoverRefactorProps = ExtractPropTypes<typeof popoverRefactorProps>;
+export type PopoverProps = ExtractPropTypes<typeof popoverProps>;
+export interface UsePopoverEvent {
+  onPointerover: () => void;
+  onPointerleave: () => void;
+}

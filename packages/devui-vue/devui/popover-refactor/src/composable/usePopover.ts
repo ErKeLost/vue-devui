@@ -1,21 +1,9 @@
 import { debounce } from 'lodash';
-import {
-  computed,
-  ComputedRef,
-  defineComponent,
-  onMounted,
-  onUnmounted,
-  provide,
-  Ref,
-  ref,
-  Teleport,
-  toRefs,
-  Transition,
-  watch,
-} from 'vue';
+import { computed, ComputedRef, onMounted, onUnmounted, Ref, ref, toRefs, watch } from 'vue';
+import { PopoverProps, UsePopoverEvent } from '../popover-types';
 
-export function usePopover(props, visible: Ref<boolean>, origin: Ref, popoverRef): any {
-  const { trigger, position, mouseEnterDelay, mouseLeaveDelay, show, disabled } = toRefs(props);
+export function usePopover(props: PopoverProps, visible: Ref<boolean>, origin: Ref, popoverRef: Ref): UsePopoverEvent {
+  const { trigger, mouseEnterDelay, mouseLeaveDelay, show, disabled } = toRefs(props);
   const isClick: ComputedRef<boolean> = computed(() => trigger.value === 'click');
   // const placement: Ref<string> = ref(position.value[0].split('-')[0]);
   const isEnter: Ref<boolean> = ref(false);
@@ -32,7 +20,7 @@ export function usePopover(props, visible: Ref<boolean>, origin: Ref, popoverRef
   const leave = debounce(() => {
     !isEnter.value && (visible.value = false);
   }, mouseLeaveDelay.value);
-  const onMouseenter = () => {
+  const onPointerover = () => {
     if (disabled.value) {
       return;
     }
@@ -41,7 +29,7 @@ export function usePopover(props, visible: Ref<boolean>, origin: Ref, popoverRef
       enter();
     }
   };
-  const onMouseleave = () => {
+  const onPointerleave = () => {
     if (!isClick.value) {
       isEnter.value = false;
       leave();
@@ -75,18 +63,14 @@ export function usePopover(props, visible: Ref<boolean>, origin: Ref, popoverRef
       quickLeave();
     }
   });
-  // const handlePositionChange: (pos: string) => void = (pos: string) => {
-  //   placement.value = pos.split('-')[0];
-  // };
   onMounted(() => {
     if (trigger.value === 'click') {
-      console.log(6666);
       origin.value.addEventListener('click', onClick);
     } else if (trigger.value === 'hover') {
-      origin.value.addEventListener('mouseenter', onMouseenter);
-      origin.value.addEventListener('mouseleave', onMouseleave);
+      origin.value.addEventListener('mouseenter', onPointerover);
+      origin.value.addEventListener('mouseleave', onPointerleave);
     }
   });
 
-  return { onMouseenter, onMouseleave };
+  return { onPointerover, onPointerleave };
 }
