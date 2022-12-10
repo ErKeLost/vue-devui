@@ -8,6 +8,7 @@ interface UseFloatingType {
   topPosition: Ref<number | undefined | null>;
   destroy: () => void;
   middlewareData: any;
+  dynamicPlacement: string;
 }
 
 export function getComponentElement(element: HTMLElement | ComponentPublicInstance | null): HTMLElement {
@@ -22,26 +23,29 @@ export function useFloating(
 ): UseFloatingType {
   const referenceElement = computed(() => getComponentElement(reference.value));
   const floatingElement = computed(() => getComponentElement(floating.value));
+  const floatingArrowElement = computed(() => getComponentElement(floatingArrow.value));
   const leftPosition = ref<number | null>();
   const topPosition = ref<number | null>();
   const middlewareData = ref();
   const placementPosition = computed(() => options.placement);
+  const dynamicPlacement = ref(placementPosition.value);
   function updatePosition() {
     if (referenceElement.value === null || floatingElement.value === null) {
       return;
     }
     computePosition(referenceElement.value, floatingElement.value, {
       // middleware: [flip(), arrow({ element: floatingArrow })],
-      middleware: [flip()],
+      middleware: [flip(), arrow({ element: floatingArrowElement.value })],
       placement: placementPosition.value,
       // placement: placementOption.value,
       // strategy: strategyOption.value,
     }).then((position) => {
-      console.log(position);
-
       leftPosition.value = position.x;
       topPosition.value = position.y;
+      dynamicPlacement.value = position.placement;
       middlewareData.value = position.middlewareData;
+      console.log(dynamicPlacement.value);
+
       // strategy.value = position.strategy;
       // placement.value = position.placement;
       // middlewareData.value = position.middlewareData;
@@ -60,7 +64,7 @@ export function useFloating(
       cleanup = undefined;
     }
   }
-  autoComputePosition();
+  // autoComputePosition();
   function attach() {
     // cleanup();
     console.log(floatingElement.value);
@@ -83,6 +87,7 @@ export function useFloating(
     topPosition,
     leftPosition,
     middlewareData,
+    dynamicPlacement,
     destroy,
   };
 }
@@ -108,6 +113,7 @@ export function useArrow(placement, middlewareData) {
   const floatingArrowBalance = computed(() => ({
     [OPPOSITE_SIDE_BY_SIDE[side.value]]: '-4px',
   }));
+  console.log(floatingArrowBalance.value);
 
   return {
     floatingArrowTop,

@@ -1,4 +1,4 @@
-import { computed, defineComponent, onUnmounted, provide, ref, Teleport, Transition } from 'vue';
+import { computed, defineComponent, watch, onUnmounted, provide, ref, Teleport, Transition } from 'vue';
 import type { SetupContext } from 'vue';
 import { popoverProps, PopoverProps } from './popover-types';
 import './popover.scss';
@@ -7,6 +7,12 @@ import { useNamespace } from '../../shared/hooks/use-namespace';
 import { PopperTrigger } from '../../shared/components/popper-trigger';
 import { POPPER_TRIGGER_TOKEN } from '../../shared/components/popper-trigger/src/popper-trigger-types';
 import { usePopover } from './composable/usePopover';
+const OPPOSITE_SIDE_BY_SIDE = {
+  top: 'bottom',
+  right: 'left',
+  bottom: 'top',
+  left: 'right',
+};
 export default defineComponent({
   name: 'DPopoverRefactor',
   inheritAttrs: false,
@@ -19,14 +25,22 @@ export default defineComponent({
     const showFloatEl = ref<boolean>(false);
     provide(POPPER_TRIGGER_TOKEN, reference);
     const ns = useNamespace('popover');
-    const { onPointerover, onPointerleave, middlewareData } = usePopover(props, showFloatEl, reference, content);
-    const { leftPosition, topPosition, destroy } = useFloating(reference, content, floatingArrow, {
+    const { onPointerover, onPointerleave } = usePopover(props, showFloatEl, reference, content);
+    const { leftPosition, topPosition, dynamicPlacement, middlewareData } = useFloating(reference, content, floatingArrow, {
       placement: props.placement,
     });
-    const { floatingArrowTop, floatingArrowLeft, floatingArrowBalance } = useArrow(props.placement, middlewareData);
-    onUnmounted(() => {
-      // destroy();
+    const side = computed(() => dynamicPlacement);
+    const floatingArrowX = computed(() => middlewareData.value?.arrow?.x ?? null);
+    const floatingArrowY = computed(() => middlewareData.value?.arrow?.y ?? null);
+    const floatingArrowTop = computed(() => (floatingArrowY.value === null ? '' : `${floatingArrowY.value}px`));
+    const floatingArrowLeft = computed(() => (floatingArrowX.value === null ? '' : `${floatingArrowX.value}px`));
+    const floatingArrowBalance = computed(() => ({
+      [OPPOSITE_SIDE_BY_SIDE[dynamicPlacement.value]]: '-4px',
+    }));
+    watch(floatingArrowBalance, (n) => {
+      console.log(n);
     });
+    // const { floatingArrowTop, floatingArrowLeft, floatingArrowBalance } = useArrow(props.placement, middlewareData);
     const floatElement = computed(() => {
       return {
         left: `${leftPosition.value}px`,
@@ -37,6 +51,7 @@ export default defineComponent({
       return (
         <>
           <PopperTrigger>{ctx.slots.default?.()}</PopperTrigger>
+          {dynamicPlacement.value}
           {ctx.slots.content?.() ? (
             <Teleport to="body">
               <Transition
@@ -49,12 +64,12 @@ export default defineComponent({
                     class="devui-popover-content"
                     style={floatElement.value}>
                     <div
-                      ref="floatingArrow"
+                      ref={floatingArrow}
                       class="arrow-devui"
                       style={{
-                        top: floatingArrowTop,
-                        left: floatingArrowLeft,
-                        ...floatingArrowBalance,
+                        top: floatingArrowTop.value,
+                        left: floatingArrowLeft.value,
+                        ...floatingArrowBalance.value,
                       }}></div>
                     {ctx.slots.content?.()}
                   </div>

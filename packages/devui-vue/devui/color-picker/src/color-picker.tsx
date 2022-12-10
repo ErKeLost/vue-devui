@@ -81,7 +81,7 @@ export default defineComponent({
     return () => {
       return (
         <>
-          <d-popover-refactor
+          <DPopoverRefactor
             placement="bottom-start"
             animateName="color-picker-transition"
             v-slots={{
@@ -112,7 +112,7 @@ export default defineComponent({
                 </div>
               </div>
             </div>
-          </d-popover-refactor>
+          </DPopoverRefactor>
         </>
       );
     };
