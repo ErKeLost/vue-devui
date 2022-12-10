@@ -17,7 +17,11 @@ export type TriggerType = 'click' | 'hover' | 'manually';
 export const popoverRefactorProps = {
   placement: {
     type: String,
-    default: 'bottom',
+    default: 'top',
+  },
+  show: {
+    type: Boolean,
+    default: false
   },
   offset: {
     type: [Number, Object] as PropType<number | OffsetOptions>,

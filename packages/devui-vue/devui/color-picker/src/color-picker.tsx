@@ -1,12 +1,12 @@
 import { defineComponent, ref, computed, onMounted, watch, provide, unref, readonly, Transition } from 'vue';
 import type { StyleValue, Ref } from 'vue';
-import { useReactive, isExhibitionColorPicker, changeColorValue } from './utils/composable';
+import { useReactive, changeColorValue } from './utils/composable';
 import { colorPickerProps, ColorPickerProps } from './color-picker-types';
 import colorPanel from './components/color-picker-panel/color-picker-panel';
 import './color-picker.scss';
 import { parseColor, extractColor, RGBAtoCSS } from './utils/color-utils';
 import { ColorPickerColor } from './utils/color-utils-types';
-import popoverRefactor from '../../popover-refactor/src/popover-refactor';
+import DPopoverRefactor from '../../popover-refactor/src/popover-refactor';
 export default defineComponent({
   name: 'DColorPicker',
   components: {
@@ -39,20 +39,6 @@ export default defineComponent({
       const value = extractColor(initialColor.value as ColorPickerColor, props.modelValue, mode.value as string, props.showAlpha);
       emit('update:modelValue', value);
     }
-    function isExhibition(event: Event) {
-      return isExhibitionColorPicker(
-        event as PointerEvent,
-        colorCubeRef as Ref<HTMLElement>,
-        pickerRef as Ref<HTMLElement>,
-        showColorPicker
-      );
-    }
-    onMounted(() => {
-      // resize 响应式 colorpicker
-      // window.addEventListener('resize', resize);
-      // 点击展示 colorpicker
-      window.addEventListener('click', isExhibition, true);
-    });
     // 交互触发item 颜色 面板  动态修改alpha后要还原 alpha 2021.12.18
     const triggerColor = computed(() => {
       const currentColor = (initialColor.value as ColorPickerColor).rgba;
@@ -101,17 +87,15 @@ export default defineComponent({
             v-slots={{
               content: () => (
                 <Transition name="color-picker-transition">
-                  {showColorPicker.value ? (
-                    <div ref={pickerRef} class={['devui-color-picker-position']}>
-                      <color-panel
-                        v-model={initialColor.value}
-                        ref={containerRef}
-                        mode={mode.value}
-                        onChangeTextColor={changeTextColor}
-                        onChangePaletteColor={changePaletteColor}
-                        onChangeTextModeType={changeTextModeType}></color-panel>
-                    </div>
-                  ) : null}
+                  <div ref={pickerRef} class={['devui-color-picker-position']}>
+                    <color-panel
+                      v-model={initialColor.value}
+                      ref={containerRef}
+                      mode={mode.value}
+                      onChangeTextColor={changeTextColor}
+                      onChangePaletteColor={changePaletteColor}
+                      onChangeTextModeType={changeTextModeType}></color-panel>
+                  </div>
                 </Transition>
               ),
             }}>
