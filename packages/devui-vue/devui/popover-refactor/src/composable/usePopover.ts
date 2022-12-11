@@ -40,7 +40,7 @@ export function usePopover(props: PopoverProps, visible: Ref<boolean>, origin: R
     visible.value = false;
   };
   function onDocumentClick(e: Event) {
-    if (!origin.value?.contains(e.target as HTMLElement) && !popoverRef.value.$el?.contains(e.target)) {
+    if (!origin.value?.contains(e.target as HTMLElement) && !popoverRef.value?.contains(e.target)) {
       visible.value = false;
     }
   }

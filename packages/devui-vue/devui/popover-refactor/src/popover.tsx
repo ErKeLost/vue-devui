@@ -37,9 +37,6 @@ export default defineComponent({
     const floatingArrowBalance = computed(() => ({
       [OPPOSITE_SIDE_BY_SIDE[dynamicPlacement.value]]: '-4px',
     }));
-    watch(floatingArrowBalance, (n) => {
-      console.log(n);
-    });
     // const { floatingArrowTop, floatingArrowLeft, floatingArrowBalance } = useArrow(props.placement, middlewareData);
     const floatElement = computed(() => {
       return {

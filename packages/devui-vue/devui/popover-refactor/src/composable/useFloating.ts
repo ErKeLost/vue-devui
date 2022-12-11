@@ -44,8 +44,6 @@ export function useFloating(
       topPosition.value = position.y;
       dynamicPlacement.value = position.placement;
       middlewareData.value = position.middlewareData;
-      console.log(dynamicPlacement.value);
-
       // strategy.value = position.strategy;
       // placement.value = position.placement;
       // middlewareData.value = position.middlewareData;
