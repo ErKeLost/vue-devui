@@ -25,7 +25,7 @@ export default defineComponent({
     const { leftPosition, topPosition, dynamicPlacement, middlewareData } = useFloating(reference, contentEl, floatingArrow, {
       placement: props.placement,
     });
-    const { floatingArrowLeft, floatingArrowBalance } = useArrow(dynamicPlacement, middlewareData);
+    const { floatingArrowLeft, floatingArrowTop, floatingArrowBalance } = useArrow(dynamicPlacement, middlewareData);
     const floatElement = computed(() => {
       return {
         left: `${leftPosition.value}px`,
@@ -38,8 +38,7 @@ export default defineComponent({
           <PopperTrigger>{ctx.slots.default?.()}</PopperTrigger>
           {ctx.slots.content?.() ? (
             <Teleport to="body">
-              <Transition
-                name={animation ? (props.animateName.length > 0 ? props.animateName : ns.m(`fade-${props.placement}`)) : ''}>
+              <Transition name={animation ? (props.animateName.length > 0 ? props.animateName : ns.m(`fade-${props.placement}`)) : ''}>
                 {showFloatEl.value ? (
                   <div
                     onPointerover={onPointerover}
@@ -53,6 +52,7 @@ export default defineComponent({
                         class={ns.e('arrow')}
                         style={{
                           left: floatingArrowLeft.value,
+                          top: floatingArrowTop.value,
                           ...floatingArrowBalance.value,
                         }}
                       />
