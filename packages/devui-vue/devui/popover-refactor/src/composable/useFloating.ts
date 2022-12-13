@@ -1,5 +1,5 @@
 // import type { ComputePositionConfig, ComputePositionReturn, Middleware, SideObject, Placement, MiddlewareData } from '@floating-ui/core';
-import { computePosition, flip, autoUpdate, arrow as apply } from '@floating-ui/dom';
+import { computePosition, flip, autoUpdate, arrow, offset } from '@floating-ui/dom';
 import type { Middleware, Padding } from '@floating-ui/dom';
 import { ref, Ref, watch, computed, ComponentPublicInstance, unref, onScopeDispose, getCurrentScope } from 'vue';
 import { throttle } from 'lodash';
@@ -15,6 +15,19 @@ export function getComponentElement(element: HTMLElement | ComponentPublicInstan
   return (element as ComponentPublicInstance)?.$el ?? element;
 }
 
+// function arrow(options: ArrowOptions): Middleware {
+//   return {
+//     name: 'arrow',
+//     options,
+//     fn(args) {
+//       const element = getComponentElement(unref(options.element));
+//       if (element === null) {
+//         return {};
+//       }
+//       return apply({ element, padding: options.padding }).fn(args);
+//     },
+//   };
+// }
 export function useFloating(
   reference: Ref<HTMLElement | ComponentPublicInstance | null>,
   floating: Ref<HTMLElement | ComponentPublicInstance | null>,
@@ -29,17 +42,19 @@ export function useFloating(
   const middlewareData = ref();
   const placementPosition = computed(() => options.placement);
   const dynamicPlacement = ref(placementPosition.value);
-  function updatePosition() {
+  async function updatePosition() {
     if (referenceElement.value === null || floatingElement.value === null) {
       return;
     }
     computePosition(referenceElement.value, floatingElement.value, {
       // middleware: [flip(), arrow({ element: floatingArrow })],
-      middleware: [flip(), arrow({ element: floatingArrowElement.value })],
+      middleware: [arrow({ element: floatingArrowElement.value }), flip(), offset(10)],
       placement: placementPosition.value,
       // placement: placementOption.value,
       // strategy: strategyOption.value,
     }).then((position) => {
+      console.log(position);
+
       leftPosition.value = position.x;
       topPosition.value = position.y;
       dynamicPlacement.value = position.placement;
@@ -62,11 +77,7 @@ export function useFloating(
       cleanup = undefined;
     }
   }
-  // autoComputePosition();
   function attach() {
-    // cleanup();
-    console.log(floatingElement.value);
-
     if (cleanup === undefined) {
       autoComputePosition();
       return;
@@ -93,45 +104,4 @@ export function useFloating(
 interface ArrowOptions {
   element: HTMLElement;
   padding?: Padding;
-}
-
-const OPPOSITE_SIDE_BY_SIDE = {
-  top: 'bottom',
-  right: 'left',
-  bottom: 'top',
-  left: 'right',
-};
-
-export function useArrow(placement, middlewareData) {
-  const side = computed(() => placement.split('-')[0]);
-  const floatingArrowX = computed(() => middlewareData.value.arrow?.x ?? null);
-  const floatingArrowY = computed(() => middlewareData.value.arrow?.y ?? null);
-  const floatingArrowTop = computed(() => (floatingArrowY.value === null ? '' : `${floatingArrowY.value}px`));
-  const floatingArrowLeft = computed(() => (floatingArrowX.value === null ? '' : `${floatingArrowX.value}px`));
-  const floatingArrowBalance = computed(() => ({
-    [OPPOSITE_SIDE_BY_SIDE[side.value]]: '-4px',
-  }));
-  console.log(floatingArrowBalance.value);
-
-  return {
-    floatingArrowTop,
-    floatingArrowLeft,
-    floatingArrowBalance,
-  };
-}
-
-export function arrow(options: ArrowOptions): Middleware {
-  return {
-    name: 'arrow',
-    options,
-    fn(args) {
-      const element = getComponentElement(unref(options.element));
-
-      if (element == null) {
-        return {};
-      }
-
-      return apply({ element, padding: options.padding }).fn(args);
-    },
-  };
 }

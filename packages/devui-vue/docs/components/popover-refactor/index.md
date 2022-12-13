@@ -69,11 +69,11 @@ export default defineComponent({
   }
 }
 #floating {
-  background: #fab1a0;
-  padding: 0.5rem;
-  border: 1px dash gray;
-  color: white;
-  width: 60px;
+  // background: #fab1a0;
+  // padding: 0.5rem;
+  // border: 1px dash gray;
+  // color: white;
+  // width: 60px;
 }
 </style>
 ```

@@ -4,17 +4,32 @@
 .#{$devui-prefix}-popover-reference {
   position: relative;
 }
+.#{$devui-prefix}-popover {
+  position: absolute;
+  border-radius: $devui-border-radius;
+  box-shadow: $devui-shadow-length-connected-overlay $devui-shadow;
+  z-index: $devui-z-index-function-widget;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  white-space: nowrap;
+  padding: 4px 12px;
+  line-height: 1.5;
+  border-radius: $devui-border-radius-feedback;
+  color: $devui-feedback-overlay-text;
+  background-color: $devui-feedback-overlay-bg;
+  &__arrow {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    transform: rotate(45deg);
+    background-color: inherit;
+  }
+}
 
 .#{$devui-prefix}-popover-content {
   position: absolute;
   z-index: $devui-z-index-function-widget;
-}
-
-.arrow-devui {
-  width: 20px;
-  height: 20px;
-  background-color: skyblue;
-  position: absolute;
 }
 .#{$devui-prefix}-popover--fade {
   &-bottom,

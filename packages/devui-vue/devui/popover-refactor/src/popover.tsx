@@ -1,18 +1,13 @@
-import { computed, defineComponent, watch, onUnmounted, provide, ref, Teleport, Transition } from 'vue';
+import { computed, defineComponent, provide, ref, Teleport, Transition } from 'vue';
 import type { SetupContext } from 'vue';
 import { popoverProps, PopoverProps } from './popover-types';
 import './popover.scss';
-import { useFloating, useArrow } from './composable/useFloating';
+import { useFloating } from './composable/useFloating';
+import { useArrow } from './composable/useArrow';
 import { useNamespace } from '../../shared/hooks/use-namespace';
 import { PopperTrigger } from '../../shared/components/popper-trigger';
 import { POPPER_TRIGGER_TOKEN } from '../../shared/components/popper-trigger/src/popper-trigger-types';
 import { usePopover } from './composable/usePopover';
-const OPPOSITE_SIDE_BY_SIDE = {
-  top: 'bottom',
-  right: 'left',
-  bottom: 'top',
-  left: 'right',
-};
 export default defineComponent({
   name: 'DPopoverRefactor',
   inheritAttrs: false,
@@ -29,15 +24,7 @@ export default defineComponent({
     const { leftPosition, topPosition, dynamicPlacement, middlewareData } = useFloating(reference, content, floatingArrow, {
       placement: props.placement,
     });
-    const side = computed(() => dynamicPlacement);
-    const floatingArrowX = computed(() => middlewareData.value?.arrow?.x ?? null);
-    const floatingArrowY = computed(() => middlewareData.value?.arrow?.y ?? null);
-    const floatingArrowTop = computed(() => (floatingArrowY.value === null ? '' : `${floatingArrowY.value}px`));
-    const floatingArrowLeft = computed(() => (floatingArrowX.value === null ? '' : `${floatingArrowX.value}px`));
-    const floatingArrowBalance = computed(() => ({
-      [OPPOSITE_SIDE_BY_SIDE[dynamicPlacement.value]]: '-4px',
-    }));
-    // const { floatingArrowTop, floatingArrowLeft, floatingArrowBalance } = useArrow(props.placement, middlewareData);
+    const { floatingArrowLeft, floatingArrowBalance } = useArrow(dynamicPlacement, middlewareData);
     const floatElement = computed(() => {
       return {
         left: `${leftPosition.value}px`,
@@ -48,7 +35,6 @@ export default defineComponent({
       return (
         <>
           <PopperTrigger>{ctx.slots.default?.()}</PopperTrigger>
-          {dynamicPlacement.value}
           {ctx.slots.content?.() ? (
             <Teleport to="body">
               <Transition
@@ -58,17 +44,19 @@ export default defineComponent({
                     onPointerover={onPointerover}
                     onPointerleave={onPointerleave}
                     ref={content}
-                    class="devui-popover-content"
+                    class={ns.b()}
                     style={floatElement.value}>
-                    <div
+                    {/* {props.showArrow ? ( */}
+                    <span
                       ref={floatingArrow}
-                      class="arrow-devui"
+                      class={ns.e('arrow')}
                       style={{
-                        top: floatingArrowTop.value,
                         left: floatingArrowLeft.value,
                         ...floatingArrowBalance.value,
-                      }}></div>
-                    {ctx.slots.content?.()}
+                      }}
+                    />
+                    {/* ) : null} */}
+                    {ctx.slots.content?.() || <span>{content.value}</span>}
                   </div>
                 ) : null}
               </Transition>
