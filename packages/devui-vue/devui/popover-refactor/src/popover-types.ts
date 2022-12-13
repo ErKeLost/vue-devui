@@ -25,6 +25,10 @@ export const popoverProps = {
     type: Boolean,
     default: false,
   },
+  arrow: {
+    type: Boolean,
+    default: false,
+  },
   offset: {
     type: [Number, Object] as PropType<number | OffsetOptions>,
     default: 8,
@@ -37,7 +41,7 @@ export const popoverProps = {
     type: String as PropType<TriggerType>,
     default: 'click',
   },
-  showAnimation: {
+  animation: {
     type: Boolean,
     default: true,
   },

@@ -35,7 +35,10 @@
     <d-popover-refactor trigger="hover" :mouse-leave-delay="2000">
       <div id="reference"></div>
       <template #content>
-        <div id="floating">Tooltip</div>
+        <div id="floating">
+          import {computePosition, offset} from '@floating-ui/dom'; computePosition(referenceEl, floatingEl, { middleware: [offset(10)], });
+          The value(s) passed are logical , meaning their effect on the physical result is dependent on the writing direction (e.g. RTL).
+        </div>
       </template>
     </d-popover-refactor>
   </div>
